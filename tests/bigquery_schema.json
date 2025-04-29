@@ -1,0 +1,44 @@
+[
+    {
+      "name": "transaction_id",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "description": "Unique identifier for the transaction"
+    },
+    {
+      "name": "product_id",
+      "type": "STRING",
+      "mode": "REQUIRED",
+      "description": "Identifier of the product being sold"
+    },
+    {
+      "name": "amount",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "description": "Original sale amount before tax"
+    },
+    {
+      "name": "customer_id",
+      "type": "STRING",
+      "mode": "NULLABLE",
+      "description": "Optional identifier for the customer"
+    },
+    {
+      "name": "tax",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "description": "Tax calculated during ETL (e.g., 10% of amount)"
+    },
+    {
+      "name": "total_amount",
+      "type": "FLOAT",
+      "mode": "REQUIRED",
+      "description": "Final transaction amount after adding tax"
+    },
+    {
+      "name": "processed_at",
+      "type": "TIMESTAMP",
+      "mode": "REQUIRED",
+      "description": "Timestamp when the record was processed"
+    }
+]  
