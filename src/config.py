@@ -10,6 +10,3 @@ TABLE_NAME = "transactions"
 
 # Fully qualified BigQuery table ID
 BIGQUERY_TABLE_ID = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_NAME}"
-
-# Request validation settings
-MAX_REQUEST_SIZE_MB = 5
