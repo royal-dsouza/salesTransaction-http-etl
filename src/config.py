@@ -10,3 +10,5 @@ TABLE_NAME = "transactions"
 
 # Fully qualified BigQuery table ID
 BIGQUERY_TABLE_ID = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_NAME}"
+
+SERVICE_ACCOUNT_FILE = "/Users/royaldsouza/Downloads/my_gcp_project.json"

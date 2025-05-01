@@ -1,12 +1,16 @@
 import logging
 from google.cloud import bigquery
-from config import BIGQUERY_TABLE_ID
+from google.oauth2 import service_account
+from config import BIGQUERY_TABLE_ID, SERVICE_ACCOUNT_FILE
 
 # Set up logging configuration
 logger = logging.getLogger(__name__)
 
-# Initialize BigQuery client
-client = bigquery.Client()
+# Load credentials
+credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE)
+
+# Create BigQuery client with credentials
+client = bigquery.Client(credentials=credentials)
 
 def insert_into_bigquery(row, table_id):
     """
@@ -23,6 +27,8 @@ def insert_into_bigquery(row, table_id):
         RuntimeError: If one or more insert errors occur.
     """
     logger.info("Attempting to insert row into BigQuery: %s", row)
+    print(row)
+    print(type(row))
 
     # Insert the row using the BigQuery client
     errors = client.insert_rows_json(table_id, [row])

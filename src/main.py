@@ -2,6 +2,8 @@
 Main Cloud Run service module for the Sales ETL microservice.
 Handles HTTP requests, orchestrates validation, transformation, and loading to BigQuery.
 """
+import multiprocessing
+multiprocessing.set_start_method("spawn", force=True)
 import logging
 from flask import request, jsonify
 import functions_framework
@@ -10,7 +12,7 @@ from pydantic import ValidationError
 from schema import validate_transaction
 from transform import transform_record
 from bigquery_loader import insert_into_bigquery
-from config import BIGQUERY_TABLE_ID
+from config import BIGQUERY_TABLE_ID, SERVICE_ACCOUNT_FILE
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
