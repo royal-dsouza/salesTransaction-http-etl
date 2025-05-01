@@ -22,6 +22,9 @@ def transform_record(record: Dict[str, Any]) -> Dict[str, Any]:
     logger.info("Starting transformation for record: %s", record)
 
     try:
+        # round the amount to 2 decimal
+        record['amount'] = round(record['amount'],2)
+        
         # Calculate 10% tax and round to 2 decimal places
         record['tax'] = round(record['amount'] * 0.1, 2)
 

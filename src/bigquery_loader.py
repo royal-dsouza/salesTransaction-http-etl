@@ -9,9 +9,6 @@ logger = logging.getLogger(__name__)
 # Load credentials
 credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE)
 
-# Create BigQuery client with credentials
-client = bigquery.Client(credentials=credentials)
-
 def insert_into_bigquery(row, table_id):
     """
     Inserts a single row of data into a BigQuery table.
@@ -26,9 +23,10 @@ def insert_into_bigquery(row, table_id):
     Raises:
         RuntimeError: If one or more insert errors occur.
     """
+    # Create BigQuery client with credentials
+    client = bigquery.Client(credentials=credentials)
+
     logger.info("Attempting to insert row into BigQuery: %s", row)
-    print(row)
-    print(type(row))
 
     # Insert the row using the BigQuery client
     errors = client.insert_rows_json(table_id, [row])

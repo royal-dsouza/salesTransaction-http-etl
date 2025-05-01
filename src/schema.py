@@ -1,5 +1,5 @@
 import logging
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, Field
 from typing import Optional, Tuple, Any, Dict, Union
 
 # --------------------------
@@ -24,7 +24,7 @@ class SaleTransaction(BaseModel):
     """
     transaction_id: str
     product_id: str
-    amount: float
+    amount: float = Field(gt=0)
     customer_id: Optional[str] = None
 
 # --------------------------
