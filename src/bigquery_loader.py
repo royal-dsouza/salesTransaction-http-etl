@@ -1,7 +1,7 @@
 import logging
 from google.cloud import bigquery
 from google.oauth2 import service_account
-from config import BIGQUERY_TABLE_ID, SERVICE_ACCOUNT_FILE
+from config import SERVICE_ACCOUNT_FILE
 
 # Set up logging configuration
 logger = logging.getLogger(__name__)
