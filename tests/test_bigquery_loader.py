@@ -4,7 +4,7 @@ from src.bigquery_loader import insert_into_bigquery
 
 def test_successful_insert(mocker):
     # Mock the BigQuery client and its insert_rows_json method
-    mock_client_class = mocker.patch("bigquery_loader.bigquery.Client")
+    mock_client_class = mocker.patch("src.bigquery_loader.bigquery.Client")
     mock_client = mock_client_class.return_value
     mock_client.insert_rows_json.return_value = []
 
