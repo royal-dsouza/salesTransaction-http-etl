@@ -24,7 +24,7 @@ def test_successful_insert(mocker):
     mock_client.insert_rows_json.assert_called_once_with("project.dataset.table", [test_row])
 
 def test_failed_insert_raises_error(mocker):
-    mock_client_class = mocker.patch("bigquery_loader.bigquery.Client")
+    mock_client_class = mocker.patch("src.bigquery_loader.bigquery.Client")
     mock_client = mock_client_class.return_value
     mock_client.insert_rows_json.return_value = [{"index": 0, "errors": ["Invalid row"]}]
 
