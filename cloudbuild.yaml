@@ -42,10 +42,10 @@ steps:
           --region us-central1 --platform managed \
           --set-env-vars GCP_PROJECT=$PROJECT_ID,BIGQUERY_DATASET=$_BIGQUERY_DATASET_STG,BIGQUERY_TABLE=$_BIGQUERY_TABLE_STG \
           --allow-unauthenticated \
-          --traffic=latest=100 \
+          --traffic=100 \
           --service-account=gcp-admin@elevated-column-458305-f8.iam.gserviceaccount.com
 
-  # Step 5: Deploy to production (no traffic initially) using bash command
+  # Step 5: Deploy to production using bash command
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'Deploy-Prod-No-Traffic'
     entrypoint: 'bash'
@@ -56,37 +56,38 @@ steps:
           --image=gcr.io/$PROJECT_ID/sales-etl-service:$COMMIT_SHA \
           --region=us-central1 \
           --platform=managed \
-          --no-traffic \
           --tag=rev-$COMMIT_SHA \
           --set-env-vars=GCP_PROJECT=$PROJECT_ID,BIGQUERY_DATASET=$_BIGQUERY_DATASET,BIGQUERY_TABLE=$_BIGQUERY_TABLE \
-          --service-account=gcp-admin@elevated-column-458305-f8.iam.gserviceaccount.com
+          --service-account=gcp-admin@elevated-column-458305-f8.iam.gserviceaccount.com \
+          --traffic=100
 
-  # Step 6: Gradually migrate traffic to the new production revision (50% traffic to new revision)
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'Update-Traffic'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        gcloud run services update-traffic sales-etl-service-prod \
-          --region=us-central1 \
-          --platform=managed \
-          --to-revisions=rev-$COMMIT_SHA=50 \
-          --to-revisions=latest=50 \
-          --service-account=gcp-admin@elevated-column-458305-f8.iam.gserviceaccount.com
+
+  # # Step 6: Gradually migrate traffic to the new production revision (50% traffic to new revision)
+  # - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  #   id: 'Update-Traffic'
+  #   entrypoint: 'bash'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       gcloud run services update-traffic sales-etl-service-prod \
+  #         --region=us-central1 \
+  #         --platform=managed \
+  #         --to-revisions=rev-$COMMIT_SHA=50 \
+  #         --to-revisions=latest=50 \
+  #         --service-account=gcp-admin@elevated-column-458305-f8.iam.gserviceaccount.com
 
   # Optional: Step 7: Full traffic to new production revision after testing (100% traffic to new revision)
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'Update-Traffic-Full'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        gcloud run services update-traffic sales-etl-service-prod \
-          --region=us-central1 \
-          --platform=managed \
-          --to-revisions=rev-$COMMIT_SHA=100 \
-          --service-account=gcp-admin@elevated-column-458305-f8.iam.gserviceaccount.com
+  # - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  #   id: 'Update-Traffic-Full'
+  #   entrypoint: 'bash'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       gcloud run services update-traffic sales-etl-service-prod \
+  #         --region=us-central1 \
+  #         --platform=managed \
+  #         --to-revisions=rev-$COMMIT_SHA=100 \
+  #         --service-account=gcp-admin@elevated-column-458305-f8.iam.gserviceaccount.com
 
 # Store built images in Container Registry
 images:
