@@ -6,6 +6,9 @@ substitutions:
   _BIGQUERY_DATASET: Sales_Transaction
   _BIGQUERY_TABLE: transactions
 
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 steps:
   # Step 1: Run unit tests
   - name: 'python:3.9-slim'
