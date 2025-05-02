@@ -42,7 +42,6 @@ steps:
           --region us-central1 --platform managed \
           --set-env-vars GCP_PROJECT=$PROJECT_ID,BIGQUERY_DATASET=$_BIGQUERY_DATASET_STG,BIGQUERY_TABLE=$_BIGQUERY_TABLE_STG \
           --allow-unauthenticated \
-          --traffic=100 \
           --service-account=gcp-admin@elevated-column-458305-f8.iam.gserviceaccount.com
 
   # Step 5: Deploy to production using bash command
@@ -59,7 +58,6 @@ steps:
           --tag=rev-$COMMIT_SHA \
           --set-env-vars=GCP_PROJECT=$PROJECT_ID,BIGQUERY_DATASET=$_BIGQUERY_DATASET,BIGQUERY_TABLE=$_BIGQUERY_TABLE \
           --service-account=gcp-admin@elevated-column-458305-f8.iam.gserviceaccount.com \
-          --traffic=100
 
 
   # # Step 6: Gradually migrate traffic to the new production revision (50% traffic to new revision)
