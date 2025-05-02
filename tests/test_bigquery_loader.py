@@ -1,9 +1,6 @@
 # tests/test_bigquery_loader.py
 import pytest
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-from bigquery_loader import insert_into_bigquery
+from src.bigquery_loader import insert_into_bigquery
 
 def test_successful_insert(mocker):
     # Mock the BigQuery client and its insert_rows_json method

@@ -1,10 +1,6 @@
 # tests/test_schema.py
 import pytest
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-
-from schema import validate_transaction
+from src.schema import validate_transaction
 
 @pytest.mark.parametrize("transaction,expected", [
     (   # Valid input
