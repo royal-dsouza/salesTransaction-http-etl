@@ -6,7 +6,7 @@ import os
 
 # BigQuery settings (from environment variables with default fallback)
 PROJECT_ID = os.getenv("GCP_PROJECT", "elevated-column-458305-f8")
-DATASET_ID = os.getenv("BIGQUERY_DATASET", "Sales_Transaction_HTTP")
+DATASET_ID = os.getenv("BIGQUERY_DATASET", "Sales_Transaction")
 TABLE_NAME = os.getenv("BIGQUERY_TABLE", "transaction")
 
 # Fully qualified BigQuery table ID

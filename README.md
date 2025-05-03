@@ -1,15 +1,18 @@
 # Sales ETL Microservice
 
-An HTTP-triggered ETL (Extract, Transform, Load) microservice built with Python and deployed to Google Cloud Run. This service processes sales transaction data in JSON format, performs validation and transformation, and loads it into BigQuery.
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen) 
+![Python](https://img.shields.io/badge/python-3.9%2B-blue)
+
+A robust HTTP-triggered ETL (Extract, Transform, Load) microservice built with Python and deployed to Google Cloud Run. This service processes sales transaction data in JSON format, performs validation and transformation, and loads it into BigQuery for analytics and reporting.
 
 ## ✨ Features
 
-- **Validation** - Validates incoming JSON sales transaction data against a predefined schema
-- **Transformation** - Calculates tax, totals, and enriches with timestamps
-- **Loading** - Stores processed data into BigQuery for analysis and reporting
-- **Containerized** - Packaged as a Docker container and deployed to Cloud Run
-- **CI/CD Pipeline** - Automated testing, building, and deployment with Google Cloud Build
-- **Unit Testing** - Comprehensive test coverage for all components
+- **Data Validation** - Strict validation of incoming JSON sales transaction data against a predefined schema
+- **Transformation** - Automatic calculation of tax, totals, and enrichment with timestamps and metadata
+- **Loading** - Stores processed data into BigQuery
+- **Containerized Deployment** - Packaged as a Docker container and deployed to Cloud Run for scalability
+- **Automated CI/CD Pipeline** - Continuous integration and deployment with Google Cloud Build
+- **Comprehensive Testing** - Extensive test coverage for all components ensuring reliability
 
 ## 🏗️ Technical Architecture
 
@@ -17,23 +20,25 @@ An HTTP-triggered ETL (Extract, Transform, Load) microservice built with Python 
 
 | Component | Description |
 |-----------|-------------|
-| **HTTP Endpoint** | Cloud Run service exposing an HTTP endpoint for data ingestion |
-| **Data Validation** | JSON Schema validation to ensure data integrity |
-| **Data Transformation** | Business logic for tax calculation and data enrichment |
+| **HTTP Endpoint** | Serverless Cloud Run service exposing a HTTP endpoint for data ingestion |
+| **Data Validation** | JSON Schema validation with detailed error reporting to ensure data integrity |
+| **Data Transformation** | Business logic for tax calculation, total amount calculation and processed time |
 | **BigQuery Integration** | ETL process to load cleaned data into BigQuery tables |
-| **CI/CD Pipeline** | Automated deployment pipeline with testing and traffic management |
+| **CI/CD Pipeline** | Fully automated deployment pipeline with testing |
 
 ### Project Structure
 
 ```
-sales-etl-service/
+salesTransaction-http-etl/
 ├── src/
+    ├── __init__.py 
 │   ├── main.py                # Main application file with Cloud Run service
 │   ├── schema.py              # JSON schema validation
 │   ├── transform.py           # Data transformation logic
 │   ├── bigquery_loader.py     # BigQuery integration
 │   └── config.py              # Configuration parameters
 ├── tests/
+    ├── __init__.py 
 │   ├── test_schema.py         # Schema validation tests
 │   ├── test_transform.py      # Transformation logic tests
 │   └── test_bigquery_loader.py # BigQuery loading tests
@@ -48,20 +53,20 @@ sales-etl-service/
 
 The service is deployed as a containerized application on Google Cloud Run, which provides:
 
-- ⚡ Automatic scaling based on demand
-- 🔒 HTTPS endpoint with authentication support
-- 💰 Pay-per-use billing model
+- ⚡ **Automatic scaling** based on traffic patterns, from zero to hundreds of instances
+- 🔒 **Secure HTTPS endpoint** with authentication and authorization support
+- 💰 **Cost optimization** with pay-per-use billing and zero cost when idle
+- 🔄 **Versioned deployments** with traffic splitting capabilities
 
 ## 🔄 CI/CD Pipeline
 
-The CI/CD pipeline automates the following steps:
+The CI/CD pipeline automatically handles the entire development lifecycle:
 
-1. Run unit tests
-2. Build the Docker container
-3. Push the container to Google Container Registry
-4. Deploy to staging environment
-5. Deploy to production with traffic splitting (0% traffic initially)
-6. Gradually shift traffic to the new production version
+1. Runs unit tests
+2. Builds the Docker container
+3. Pushes the container to Google Container Registry
+4. Deploys to staging environment for verification
+5. Deploys to production environment
 
 ```mermaid
 graph TD
@@ -70,37 +75,22 @@ graph TD
     C --> D[Build Container]
     D --> E[Push to Registry]
     E --> F[Deploy to Staging]
-    F --> G[Deploy to Production]
-    G --> H[Traffic Migration]
+    F --> G[Automated Testing]
+    G --> H[Deploy to Production]
 ```
 
 ## 📝 API Usage
 
 Send HTTP POST requests to the deployed Cloud Run endpoint with JSON payloads representing sales transactions:
-
+ 
 ```bash
-curl -X POST https://your-cloud-run-url.a.run.app \
+curl -X POST https://sales-etl-service-prod-752749770357.us-central1.run.app \
     -H "Content-Type: application/json" \
     -d '{
-        "transaction_id": "TX-12345",
-        "customer_id": "CUST-001",
-        "sale_date": "2023-05-01T14:30:00Z",
-        "items": [
-            {
-                "product_id": "PROD-001",
-                "product_name": "Widget A",
-                "quantity": 2,
-                "unit_price": 10.99
-            },
-            {
-                "product_id": "PROD-002",
-                "product_name": "Widget B",
-                "quantity": 1,
-                "unit_price": 24.99
-            }
-        ],
-        "payment_method": "credit_card",
-        "store_id": "STORE-001"
+    "transaction_id": "TX1234567",
+    "product_id": "P00135",
+    "amount": 1410.0,
+    "customer_id": "CUST172345"
     }'
 ```
 
@@ -108,58 +98,147 @@ curl -X POST https://your-cloud-run-url.a.run.app \
 
 ```json
 {
-    "status": "success",
     "message": "Transaction processed successfully",
-    "transaction_id": "TX-12345",
-    "processed_at": "2023-05-01T14:35:22.123456"
+    "processed_at": "2025-05-03T14:32:23.425979",
+    "status": "success",
+    "transaction_id": "TX1234567"
 }
 ```
 
-## 💻 Development Setup
+### Error Handling
+
+The API returns appropriate HTTP status codes with descriptive error messages:
+
+- `400 Bad Request` - Invalid JSON payload or schema validation failure
+- `401 Unauthorized` - Missing or invalid authentication
+- `500 Internal Server Error` - Processing or database errors
+
+## 💻 Local Development
+
+### Prerequisites
+
+- Python 3.9 or higher
+- Google Cloud SDK installed and configured
+- Docker (for container development)
+- GCP service account with BigQuery permissions
+
+### Setup Steps
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/your-username/sales-etl-service.git
+   git clone https://github.com/royal-dsouza/salesTransaction-http-etl
    cd sales-etl-service
    ```
 
-2. Install dependencies
+2. Set up a virtual environment
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install dependencies
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Run tests
+4. Configure environment variables
+   ```bash
+   export GCP_PROJECT="your_project_id"
+   export BIGQUERY_DATASET="your_dataset"
+   export BIGQUERY_TABLE="your_table"
+   export GOOGLE_APPLICATION_CREDENTIALS="path/to/service-account-key.json"
+   ```
+
+5. Update the config.py with your service account details
+   ```python
+   # BigQuery settings (from environment variables with default fallback)
+   PROJECT_ID = os.getenv("GCP_PROJECT", "your_project_id")
+   DATASET_ID = os.getenv("BIGQUERY_DATASET", "your_dataset")
+   TABLE_NAME = os.getenv("BIGQUERY_TABLE", "your_table")
+
+   # Fully qualified BigQuery table ID
+   BIGQUERY_TABLE_ID = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_NAME}"
+
+   SERVICE_ACCOUNT_FILE = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "path_to_your_credential_file")
+   ```
+
+6. Run tests
    ```bash
    python -m pytest tests/ -v
    ```
 
-4. Run locally
+7. Start local development server
    ```bash
-   functions-framework --target=process_sales_transaction --debug
+   python src/main.py
    ```
 
-5. Build container locally
+8. Build and test locally with Docker
    ```bash
    docker build -t sales-etl-service .
-   docker run -p 8080:8080 sales-etl-service
+   docker run -p 8080:8080 \
+     -e GCP_PROJECT="your_project_id" \
+     -e BIGQUERY_DATASET="your_dataset" \
+     -e BIGQUERY_TABLE="your_table" \
+     -e GOOGLE_APPLICATION_CREDENTIALS="/tmp/keys/sa-key.json" \
+     -v $(pwd)/path/to/service-account-key.json:/tmp/keys/sa-key.json:ro \
+     sales-etl-service
    ```
 
-## ⚙️ Environment Variables
+## ☁️ Cloud Deployment
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `GCP_PROJECT` | Google Cloud Project ID | `your-project-id` |
-| `BIGQUERY_DATASET` | BigQuery dataset name | `sales_data` |
-| `BIGQUERY_TABLE` | BigQuery table name | `transactions` |
-| `DEBUG_MODE` | Enable debug mode | `False` |
-| `LOG_LEVEL` | Logging level | `INFO` |
+### GCP Project Setup
 
-## 📋 Prerequisites
+1. Enable required APIs
+   ```bash
+   gcloud services enable run.googleapis.com \
+     cloudbuild.googleapis.com \
+     bigquery.googleapis.com \
+     containerregistry.googleapis.com
+   ```
 
-- Google Cloud Platform account with:
-  - BigQuery API enabled
-  - Cloud Run API enabled
-  - Cloud Build API enabled
-  - Appropriate service accounts and permissions
-- Docker (for local container development)
-- Python 3.9+
+2. Configure service accounts and IAM roles
+   ```bash
+   # Create service account for the application
+   gcloud iam service-accounts create sales-etl-service \
+    --display-name="Sales ETL Service"
+   
+   gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+    --member="serviceAccount:${SERVICE_ACCOUNT}" \
+    --role="roles/bigquery.dataEditor" \
+    --role="roles/cloudbuild.logsWriter" \
+    --role="roles/cloudbuild.serviceAgent" \
+    --role="roles/cloudfunctions.invoker" \
+    --role="roles/run.admin" \
+    --role="roles/logging.logWriter" \
+    --role="roles/secretmanager.secretAccessor" \
+    --role="roles/iam.serviceAccountUser"
+   ```
+
+### CI/CD Setup
+
+1. Clone the repository
+   ```bash
+   git clone https://github.com/royal-dsouza/salesTransaction-http-etl
+   ```
+
+2. Update substitutions in cloudbuild.yaml
+   ```yaml
+   substitutions:
+     _BIGQUERY_DATASET_STG: your_staging_dataset
+     _BIGQUERY_TABLE_STG: your_staging_table
+     _BIGQUERY_DATASET: your_prod_dataset
+     _BIGQUERY_TABLE: your_prod_table
+   ```
+
+3. Create Cloud Build trigger
+   - Navigate to Cloud Build > Triggers
+   - Click "Create Trigger"
+   - Connect to GitHub repository
+   - Configure trigger settings:
+     - Name: `sales-etl-service-deploy`
+     - Event: `Push to branch`
+     - Repository: `your_repository`
+     - Branch: `^main$`
+     - Configuration: `Cloud Build configuration file (YAML)`
+     - Location: `Repository`
+     - File: `cloudbuild.yaml`

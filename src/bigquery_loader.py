@@ -1,6 +1,6 @@
 import logging
 from google.cloud import bigquery
-from google.oauth2 import service_account
+# from google.oauth2 import service_account # for local development
 # from config import SERVICE_ACCOUNT_FILE # for local development
 
 # Set up logging configuration
