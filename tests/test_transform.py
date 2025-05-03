@@ -1,9 +1,6 @@
 
 # tests/test_transform.py
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-from transform import transform_record
+from src.transform import transform_record
 from datetime import datetime
 
 def test_standard_transformation():

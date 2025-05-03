@@ -1,0 +1,95 @@
+# Cloud Build configuration file for sales-etl-service
+
+substitutions:
+  _BIGQUERY_DATASET_STG: Sales_Transaction_staging
+  _BIGQUERY_TABLE_STG: transactions
+  _BIGQUERY_DATASET: Sales_Transaction
+  _BIGQUERY_TABLE: transactions
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  # Step 1: Run unit tests
+  - name: 'python:3.9-slim'
+    id: 'Unit Tests'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        pip install -r requirements.txt
+        python -m pytest tests/ -v --cov=src/
+
+  # Step 2: Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: "Build"
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/sales-etl-service:$COMMIT_SHA', '.']
+
+  # Step 3: Push the Docker image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push'
+    args: ['push', 'gcr.io/$PROJECT_ID/sales-etl-service:$COMMIT_SHA']
+
+  # Step 4: Deploy to Cloud Run (staging)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: "Deploy-Staging"
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud run deploy sales-etl-service-staging \
+          --image gcr.io/$PROJECT_ID/sales-etl-service:$COMMIT_SHA \
+          --region us-central1 --platform managed \
+          --set-env-vars GCP_PROJECT=$PROJECT_ID,BIGQUERY_DATASET=$_BIGQUERY_DATASET_STG,BIGQUERY_TABLE=$_BIGQUERY_TABLE_STG \
+          --allow-unauthenticated \
+          --service-account=gcp-admin@elevated-column-458305-f8.iam.gserviceaccount.com
+
+  # Step 5: Deploy to production using bash command
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Deploy-Prod-No-Traffic'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud run deploy sales-etl-service-prod \
+          --image=gcr.io/$PROJECT_ID/sales-etl-service:$COMMIT_SHA \
+          --region=us-central1 \
+          --platform=managed \
+          --tag=rev-$COMMIT_SHA \
+          --set-env-vars=GCP_PROJECT=$PROJECT_ID,BIGQUERY_DATASET=$_BIGQUERY_DATASET,BIGQUERY_TABLE=$_BIGQUERY_TABLE \
+          --service-account=gcp-admin@elevated-column-458305-f8.iam.gserviceaccount.com \
+
+
+  # # Step 6: Gradually migrate traffic to the new production revision (50% traffic to new revision)
+  # - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  #   id: 'Update-Traffic'
+  #   entrypoint: 'bash'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       gcloud run services update-traffic sales-etl-service-prod \
+  #         --region=us-central1 \
+  #         --platform=managed \
+  #         --to-revisions=rev-$COMMIT_SHA=50 \
+  #         --to-revisions=latest=50 \
+  #         --service-account=gcp-admin@elevated-column-458305-f8.iam.gserviceaccount.com
+
+  # Optional: Step 7: Full traffic to new production revision after testing (100% traffic to new revision)
+  # - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  #   id: 'Update-Traffic-Full'
+  #   entrypoint: 'bash'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       gcloud run services update-traffic sales-etl-service-prod \
+  #         --region=us-central1 \
+  #         --platform=managed \
+  #         --to-revisions=rev-$COMMIT_SHA=100 \
+  #         --service-account=gcp-admin@elevated-column-458305-f8.iam.gserviceaccount.com
+
+# Store built images in Container Registry
+images:
+  - 'gcr.io/$PROJECT_ID/sales-etl-service:$COMMIT_SHA'
+
+# Timeout for the entire build process
+timeout: '1800s'  # 30 minutes

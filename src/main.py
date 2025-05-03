@@ -3,9 +3,10 @@ Main Cloud Run service module for the Sales ETL microservice.
 Handles HTTP requests, orchestrates validation, transformation, and loading to BigQuery.
 """
 import logging
-from flask import request, jsonify
+from flask import Flask, request, jsonify
 import functions_framework
 from pydantic import ValidationError
+import os
 
 from schema import validate_transaction
 from transform import transform_record
@@ -15,6 +16,8 @@ from config import BIGQUERY_TABLE_ID, SERVICE_ACCOUNT_FILE
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# app = Flask(__name__)
 
 @functions_framework.http
 def process_sales_transaction(request):
@@ -79,3 +82,11 @@ def process_sales_transaction(request):
             'status': 'error',
             'message': f'Error processing transaction: {str(e)}'
         }), 500
+
+# @app.route('/', methods=['POST'])
+# def run_function():
+#     return process_sales_transaction(request)
+
+# if __name__ == '__main__':
+#     port = int(os.environ.get('PORT', 8080))
+#     app.run(host='127.0.0.1', port=port, debug=False, threaded=True)
