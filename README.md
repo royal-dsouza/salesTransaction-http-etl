@@ -31,14 +31,14 @@ A robust HTTP-triggered ETL (Extract, Transform, Load) microservice built with P
 ```
 salesTransaction-http-etl/
 ├── src/
-    ├── __init__.py 
+|   ├── __init__.py 
 │   ├── main.py                # Main application file with Cloud Run service
 │   ├── schema.py              # JSON schema validation
 │   ├── transform.py           # Data transformation logic
 │   ├── bigquery_loader.py     # BigQuery integration
 │   └── config.py              # Configuration parameters
 ├── tests/
-    ├── __init__.py 
+|   ├── __init__.py 
 │   ├── test_schema.py         # Schema validation tests
 │   ├── test_transform.py      # Transformation logic tests
 │   └── test_bigquery_loader.py # BigQuery loading tests
