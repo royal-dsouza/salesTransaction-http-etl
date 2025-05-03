@@ -55,7 +55,7 @@ steps:
           --image=gcr.io/$PROJECT_ID/sales-etl-service:$COMMIT_SHA \
           --region=us-central1 \
           --platform=managed \
-          --tag=rev-$COMMIT_SHA \
+          --tag=rev-$SHORT_SHA \
           --set-env-vars=GCP_PROJECT=$PROJECT_ID,BIGQUERY_DATASET=$_BIGQUERY_DATASET,BIGQUERY_TABLE=$_BIGQUERY_TABLE \
           --service-account=gcp-admin@elevated-column-458305-f8.iam.gserviceaccount.com \
 
