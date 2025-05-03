@@ -78,8 +78,7 @@ graph TD
     C --> D[Build Container]
     D --> E[Push to Registry]
     E --> F[Deploy to Staging]
-    F --> G[Automated Testing]
-    G --> H[Deploy to Production]
+    F --> G[Deploy to Production]
 ```
 
 ## 📝 API Usage
