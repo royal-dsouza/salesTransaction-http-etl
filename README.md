@@ -58,6 +58,9 @@ The service is deployed as a containerized application on Google Cloud Run, whic
 - 💰 **Cost optimization** with pay-per-use billing and zero cost when idle
 - 🔄 **Versioned deployments** with traffic splitting capabilities
 
+## ETL Pipeline
+<img width="620" alt="image" src="https://github.com/user-attachments/assets/fd94a728-a066-4d1b-9193-4d38b8582a84" />
+
 ## 🔄 CI/CD Pipeline
 
 The CI/CD pipeline automatically handles the entire development lifecycle:
