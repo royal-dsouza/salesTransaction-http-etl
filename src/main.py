@@ -4,23 +4,22 @@ Handles HTTP requests, orchestrates validation, transformation, and loading to B
 """
 import logging
 from flask import Flask, request, jsonify
-import functions_framework
 from pydantic import ValidationError
 import os
 
 from schema import validate_transaction
 from transform import transform_record
 from bigquery_loader import insert_into_bigquery
-from config import BIGQUERY_TABLE_ID, SERVICE_ACCOUNT_FILE
+from config import BIGQUERY_TABLE_ID
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# app = Flask(__name__)
+app = Flask(__name__)
 
-@functions_framework.http
-def process_sales_transaction(request):
+@app.route("/", methods=["POST"])
+def process_sales_transaction():
     """
     Cloud Function entry point: Process sales transaction data from HTTP request.
     Validates, transforms, and loads data to BigQuery.
@@ -83,10 +82,6 @@ def process_sales_transaction(request):
             'message': f'Error processing transaction: {str(e)}'
         }), 500
 
-# @app.route('/', methods=['POST'])
-# def run_function():
-#     return process_sales_transaction(request)
-
-# if __name__ == '__main__':
-#     port = int(os.environ.get('PORT', 8080))
-#     app.run(host='127.0.0.1', port=port, debug=False, threaded=True)
+if __name__ == "__main__":
+    PORT = int(os.getenv("PORT", 8080))
+    app.run(host="0.0.0.0", port=PORT)
