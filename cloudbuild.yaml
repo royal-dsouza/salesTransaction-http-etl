@@ -2,9 +2,9 @@
 
 substitutions:
   _BIGQUERY_DATASET_STG: Sales_Transaction_staging
-  _BIGQUERY_TABLE_STG: transactions
+  _BIGQUERY_TABLE_STG: transaction
   _BIGQUERY_DATASET: Sales_Transaction
-  _BIGQUERY_TABLE: transactions
+  _BIGQUERY_TABLE: transaction
 
 options:
   logging: CLOUD_LOGGING_ONLY
