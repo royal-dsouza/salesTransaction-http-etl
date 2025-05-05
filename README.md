@@ -50,17 +50,24 @@ salesTransaction-http-etl/
 └── README.md                  # Project documentation
 ```
 
-## 🚀 Deployment
+## Bigquery schema
+Transactions are enriched with computed fields like tax and total amount, and a processing timestamp. Here's the schema used to define the target BigQuery table:
 
-The service is deployed as a containerized application on Google Cloud Run, which provides:
-
-- ⚡ **Automatic scaling** based on traffic patterns, from zero to hundreds of instances
-- 🔒 **Secure HTTPS endpoint** with authentication and authorization support
-- 💰 **Cost optimization** with pay-per-use billing and zero cost when idle
-- 🔄 **Versioned deployments** with traffic splitting capabilities
+<img width="519" alt="image" src="https://github.com/user-attachments/assets/76909890-6116-4a99-b21d-81a35fd35de3" />
 
 ## ETL Pipeline
 <img width="620" alt="image" src="https://github.com/user-attachments/assets/fd94a728-a066-4d1b-9193-4d38b8582a84" />
+
+The pipeline has three main stages:
+1. Extract → Receive & Validate JSON via HTTP
+2. Transform → Enrich the data (e.g., tax, total amount and timestamp)
+3. Load → Insert the clean record into BigQuery
+
+**Testing:**
+Each ETL stage is covered by unit tests to catch logic errors early in development. You can run all tests with:
+```
+pytest tests/
+```
 
 ## 🔄 CI/CD Pipeline
 
