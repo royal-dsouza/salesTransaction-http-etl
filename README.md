@@ -42,6 +42,7 @@ salesTransaction-http-etl/
 │   ├── test_schema.py         # Schema validation tests
 │   ├── test_transform.py      # Transformation logic tests
 │   └── test_bigquery_loader.py # BigQuery loading tests
+├── bigquery_schema.json       # bigquery table schema definition
 ├── Dockerfile                 # Container definition
 ├── requirements.txt           # Python dependencies
 ├── .dockerignore              # Files to exclude from Docker build
